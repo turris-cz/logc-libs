@@ -1,0 +1,14 @@
+= LogC extensions for various libraries
+CZ.NIC z.s.p.o. <packaging@turris.cz>
+v1.0, 2021-05-19
+:icons:
+
+These are various logging extension libraries user can include to redirect logging
+for some libraries to LogC.
+
+It would be most ideal to just have LogC support optionally included in all
+libraries but for that we are just too small project of course. Thankfully some
+libraries allow hookup of custom logging solution. This repository contains
+implementations for some of them. If you are maintainer of some library then
+please consider adding support for LogC instead of implementing additional library
+to this project.
