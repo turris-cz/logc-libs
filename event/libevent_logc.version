@@ -1,0 +1,9 @@
+V0.0 {
+	global:
+		log_event;
+
+		logc_event_init;
+		logc_event_cleanup;
+
+	local: *;
+};

@@ -12,3 +12,112 @@ libraries allow hookup of custom logging solution. This repository contains
 implementations for some of them. If you are maintainer of some library then
 please consider adding support for LogC instead of implementing additional library
 to this project.
+
+The supported libraries are currently:
+* https://libevent.org/[libevent]
+* http://czmq.zeromq.org/[czmq]
+
+
+== Dependencies
+
+The dependency is always LogC and an appropriate library we are adding support to.
+
+For bootstrap (not release tarballs):
+
+* autotools
+* autoconf-archive
+
+For tests:
+
+* https://libcheck.github.io/check[check]
+* Optionally http://www.valgrind.org[valgrind]
+* For linting https://github.com/danmar/cppcheck[cppcheck]
+* For coverage http://ltp.sourceforge.net/coverage/lcov.php[lcov]
+
+
+== Compilation
+
+To compile these libraries you have to run:
+
+----
+ ./configure
+ make
+----
+
+Subsequent installation can be done with `make install`.
+
+When you do not use distribution archive then you have to run initially
+`./bootstrap`.
+
+
+== Usage
+
+The general layout for libraries in this project is that they define `log_t` and
+at minimum two additional functions. The one function is commonly initializing
+function and second one is cleanup. A convention for naming log and functions is
+`log_${LIB}`, `logc_${LIB}_init` and `logc_${LIB}_cleanup`, where `${LIB}` is name
+of library.
+
+Common procedure to include library is to bind library's log to application log
+and calling the initialization function. It is up to you when you plan to do it
+but the easiest solution is to use constructor function for that (with destructor
+counterpart for completeness). The example follows:
+
+----
+#include <foo_logc.h>
+
+APP_LOG(app);
+
+__attribute__((constructor))
+static void log_constructor() {
+	log_bind(log_app, log_foo);
+	logc_foo_init();
+}
+
+__attribute__((destructor))
+static void log_destructor() {
+	logc_foo_cleanup();
+	log_unbind(log_app, log_foo);
+}
+----
+
+The initialization function can in general print logs and thus you should
+configure library log before you call initialization function.
+
+Note that exact usage depends on specific library and thus you should also read
+header for library you want to use.
+
+
+== Running tests
+
+LogC contains basic tests in directory tests. To run all tests you can just simply
+run:
+
+----
+ make check
+----
+
+You can also run tests with Valgrind:
+
+----
+ make check-valgrind
+----
+
+To run checks with just one specific Valgrind test such as memtest you can run:
+
+----
+ make check-valgrind-memcheck
+----
+
+Source code of project can be also linted with cppcheck by running:
+
+----
+ make lint
+----
+
+There is also possibility to generate code coverage for test cases. To do so you
+can run:
+
+----
+ make check-code-coverage
+----

@@ -1,0 +1,9 @@
+V0.0 {
+	global:
+		log_czmq;
+
+		logc_czmq_init;
+		logc_czmq_cleanup;
+
+	local: *;
+};
